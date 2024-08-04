@@ -1,0 +1,7 @@
+/nvblox_node:
+  ros__parameters:
+    tick_period_ms: 0
+    # color settings
+    use_color: false
+    # depth settings
+    use_depth: false

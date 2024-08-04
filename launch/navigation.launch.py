@@ -1,8 +1,9 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import SetRemap
 from launch_ros.substitutions import FindPackageShare
 
 PACKAGE_NAME = 'jetbot_nav'
@@ -19,6 +20,14 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare('nav2_bringup'), 'launch', 'navigation_launch.py'])
         )
+    )
+
+    nav2_group = GroupAction(
+        actions=[
+            SetRemap(src='/cmd_vel', dst='/jetbot/cmd_vel'),
+            SetRemap(src='/jetbot/odom', dst='/visual_slam/tracking/odometry'),
+            nav2_bringup_include
+        ],
     )
 
 
@@ -44,7 +53,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         nav2_params_arg,
-        nav2_bringup_include,
+        nav2_group,
         rviz2_arg,
         rviz2_group
     ])
